@@ -1,9 +1,24 @@
+const mysql = require('mysql2');
 require('dotenv').config();
 
-module.exports = {
-    database: process.env.DB_NAME,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    dialect: 'mysql',
+const connectDB = () => {
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root', // Utilisateur MySQL (par défaut 'root' avec WAMP)
+        password: '', // Mot de passe MySQL (par défaut vide avec WAMP)
+        database: 'restaurant', // Nom de ta base de données
+    });
+
+    connection.connect((err) => {
+        if (err) {
+            console.error("MySQL connection failed:", err);
+            process.exit(1);
+        } else {
+            console.log("MySQL connected");
+        }
+    });
+
+    return connection;
 };
+
+module.exports = { connectDB };
