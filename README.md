@@ -143,29 +143,31 @@ La base de données contient deux tables principales : `orders` et `simulations`
 
 ### Table `orders`
 
+| Colonne               | Type             | Description                               |
+|-----------------------|------------------|-------------------------------------------|
+| `id`                  | `int`            | Identifiant unique de la commande (clé primaire). |
+| `simulationId`        | `varchar(255)`    | Identifiant de la simulation associée.    |
+| `name`                | `varchar(255)`    | Nom de la commande.                       |
+| `arrivalDateTime`     | `timestamp`       | Heure d'arrivée de la commande.           |
+| `cookStartDateTime`   | `timestamp`       | Heure de début de la préparation.         |
+| `cookEndDateTime`     | `timestamp`       | Heure de fin de la préparation.           |
+| `cookBy`              | `varchar(255)`    | Chef responsable de la préparation.       |
+| `deliverStartDateTime`| `timestamp`       | Heure de début de la livraison.           |
+| `deliverEndDateTime`  | `timestamp`       | Heure de fin de la livraison.             |
+| `deliverBy`           | `varchar(255)`    | Livreur responsable de la livraison.      |
+| `createdDateTime`     | `timestamp`       | Heure de création de la commande.         |
+
+### Table `simulation`
+
 | Colonne              | Type             | Description                               |
 |----------------------|------------------|-------------------------------------------|
-| `id`                 | `int`            | Identifiant unique de la commande (clé primaire). |
-| `customerName`       | `varchar(255)`    | Nom du client ayant passé la commande.    |
-| `simulationId`       | `varchar(255)`    | Identifiant de la simulation associée.    |
-| `arrivalDateTime`    | `datetime`       | Heure d'arrivée de la commande.           |
-| `cookStartDateTime`  | `datetime`       | Heure de début de la préparation.         |
-| `cookEndDateTime`    | `datetime`       | Heure de fin de la préparation.           |
-| `cookBy`             | `varchar(255)`    | Chef responsable de la préparation.       |
-| `deliverStartDateTime`| `datetime`      | Heure de début de la livraison.           |
-| `deliverEndDateTime` | `datetime`       | Heure de fin de la livraison.             |
-| `deliverBy`          | `varchar(255)`    | Livreur responsable de la livraison.      |
-| `status`             | `varchar(255)`    | Statut actuel de la commande (`pending`, `completed`, etc.). |
-
-### Table `simulations`
-
-| Colonne              | Type             | Description                               |
-|----------------------|------------------|-------------------------------------------|
-| `id`                 | `int`            | Identifiant unique de la simulation (clé primaire). |
-| `simulationName`     | `varchar(255)`    | Nom de la simulation.                    |
-| `description`        | `text`           | Description de la simulation.            |
-
----
+| `id`                 | `varchar(255)`    | Identifiant unique de la simulation (clé primaire). |
+| `ordersCountMin`     | `int`             | Nombre minimum de commandes dans la simulation. |
+| `ordersCountMax`     | `int`             | Nombre maximum de commandes dans la simulation. |
+| `startDateTime`      | `timestamp`       | Heure de début de la simulation.          |
+| `endDateTime`        | `timestamp`       | Heure de fin de la simulation.            |
+| `duration`           | `int`             | Durée de la simulation (en minutes).      |
+| `createdDateTime`    | `timestamp`       | Heure de création de la simulation.       |
 
 ## Installation
 
