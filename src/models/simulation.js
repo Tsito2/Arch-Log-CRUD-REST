@@ -15,10 +15,10 @@ const createSimulation = ({ id, ordersCountMin, ordersCountMax, startDateTime, e
     });
 };
 
-// Fonction pour obtenir toutes les simulations
-const getSimulations = (callback) => {
-    const query = "SELECT * FROM simulation";
-    db.query(query, (err, results) => {
+// Fonction pour obtenir des simulations avec pagination
+const getSimulationsWithPagination = (offset, limit, callback) => {
+    const query = "SELECT * FROM simulation ORDER BY createdDateTime DESC LIMIT ? OFFSET ?";
+    db.query(query, [limit, offset], (err, results) => {
         if (err) return callback(err);
         callback(null, results);
     });
@@ -42,4 +42,9 @@ const deleteSimulation = (id, callback) => {
     });
 };
 
-module.exports = { createSimulation, getSimulations, updateSimulation, deleteSimulation };
+module.exports = {
+    createSimulation,
+    getSimulationsWithPagination,
+    updateSimulation,
+    deleteSimulation,
+};

@@ -2,7 +2,6 @@ const db = require('../config'); // Assure-toi que le chemin est correct ici
 
 // Fonction pour créer une commande
 const createOrder = ({ simulationId, name, arrivalDateTime, cookStartDateTime, cookEndDateTime, cookBy, deliverStartDateTime, deliverEndDateTime, deliverBy }, callback) => {
-    // Log des données pour vérifier la requête
     console.log("Données reçues:", { simulationId, name, arrivalDateTime, cookStartDateTime, cookEndDateTime, cookBy, deliverStartDateTime, deliverEndDateTime, deliverBy });
 
     if (!simulationId || !name || !arrivalDateTime || !cookStartDateTime || !cookEndDateTime || !cookBy || !deliverStartDateTime || !deliverEndDateTime || !deliverBy) {
@@ -20,6 +19,15 @@ const createOrder = ({ simulationId, name, arrivalDateTime, cookStartDateTime, c
 const getOrders = (callback) => {
     const query = "SELECT * FROM orders";
     db.query(query, (err, results) => {
+        if (err) return callback(err);
+        callback(null, results);
+    });
+};
+
+// Fonction pour obtenir les commandes par ID de simulation
+const getOrdersBySimulationId = (simulationId, callback) => {
+    const query = "SELECT * FROM orders WHERE simulationId = ?";
+    db.query(query, [simulationId], (err, results) => {
         if (err) return callback(err);
         callback(null, results);
     });
@@ -43,4 +51,10 @@ const deleteOrder = (id, callback) => {
     });
 };
 
-module.exports = { createOrder, getOrders, updateOrder, deleteOrder };
+module.exports = {
+    createOrder,
+    getOrders,
+    getOrdersBySimulationId,
+    updateOrder,
+    deleteOrder,
+};
