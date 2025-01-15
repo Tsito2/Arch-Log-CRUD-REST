@@ -9,19 +9,19 @@ Proj/
 ├── src/                        # Code source de l'application
 │   ├── models/                 # Logique des modèles et des requêtes SQL
 │   │   ├── index.js            # Connexion à la base de données MySQL
-│   │   ├── order-items.js      # Gestion des articles de commande
-│   │   └── order.js            # Gestion des commandes
+│   │   ├── order.js            # Gestion des commandes
+│   │   └── simulation.js       # Gestion des simulations
 │   ├── routes/                 # Définition des routes API
-│   │   ├── order-items.js      # Routes pour gérer les articles de commande
 │   │   ├── orders.js           # Routes pour gérer les commandes
-│   │   ├── app.js              # Point d'entrée de l'application Express
-│   │   └── config.js           # Configuration de l'API (configurations de port, etc.)
+│   │   └── simulations.js      # Routes pour gérer les simulations
+│   ├── app.js                  # Point d'entrée de l'application Express
+│   └── config.js               # Configuration de l'API (configurations de port, etc.)
 │
 ├── .env                        # Variables d'environnement (connexion à la base de données, etc.)
 ├── bdd.sql                     # Script SQL pour créer les tables et insérer des données de test
 ├── package.json                # Dépendances et scripts du projet
 ├── package-lock.json           # Verrouillage des versions des dépendances
-├── README.rd                   # Documentation du projet (ce fichier)
+├── README.md                   # Documentation du projet (ce fichier)
 └── server.js                   # Point d'entrée de l'application (démarre le serveur)
 ```
 
@@ -33,35 +33,35 @@ Proj/
 
 Ce fichier contient la configuration pour se connecter à la base de données MySQL. Utilise les variables définies dans `.env` pour se connecter à la base de données.
 
-### 2. **`src/models/order-items.js`**
+### 2. **`src/models/order.js`**
 
-Ce fichier gère la logique des articles de commande. Il contient des fonctions permettant d'ajouter, mettre à jour et supprimer des articles de commande dans la base de données.
+Ce fichier gère la logique des commandes. Il contient des fonctions permettant de créer, récupérer, mettre à jour et supprimer des commandes dans la base de données. Les articles de commande sont désormais directement intégrés dans la table `order` plutôt que dans une table séparée.
 
-### 3. **`src/models/order.js`**
+### 3. **`src/models/simulation.js`**
 
-Ce fichier gère la logique des commandes. Il contient des fonctions permettant de créer, récupérer, mettre à jour et supprimer des commandes dans la base de données, ainsi que d'ajouter ou de supprimer des articles dans les commandes.
+Ce fichier gère la logique des simulations. Il contient des fonctions pour créer, récupérer, mettre à jour et supprimer des simulations. Les simulations sont associées aux commandes pour déterminer les différentes étapes de préparation et de livraison.
 
-### 4. **`src/routes/order-items.js`**
-
-Définit les routes pour interagir avec les articles de commande :
-- **POST `/api/order-items`** : Crée un nouvel article dans une commande.
-- **GET `/api/order-items`** : Récupère tous les articles de commande.
-- **PUT `/api/order-items/:id`** : Met à jour un article dans une commande.
-- **DELETE `/api/order-items/:id`** : Supprime un article d'une commande.
-
-### 5. **`src/routes/orders.js`**
+### 4. **`src/routes/orders.js`**
 
 Définit les routes pour gérer les commandes :
-- **POST `/api/orders`** : Crée une nouvelle commande avec des articles.
-- **GET `/api/orders`** : Récupère toutes les commandes.
+- **POST `/api/orders`** : Crée une nouvelle commande avec des articles intégrés.
+- **GET `/api/orders`** : Récupère toutes les commandes avec leurs articles associés.
 - **PUT `/api/orders/:id`** : Met à jour une commande existante.
 - **DELETE `/api/orders/:id`** : Supprime une commande.
 
-### 6. **`src/routes/app.js`**
+### 5. **`src/routes/simulations.js`**
 
-Ce fichier sert de point d'entrée pour la configuration des routes dans Express. Il importe toutes les routes nécessaires (commandes et articles) et configure l'application Express pour les utiliser.
+Définit les routes pour gérer les simulations :
+- **POST `/api/simulations`** : Crée une nouvelle simulation pour une commande.
+- **GET `/api/simulations`** : Récupère toutes les simulations.
+- **PUT `/api/simulations/:id`** : Met à jour une simulation existante.
+- **DELETE `/api/simulations/:id`** : Supprime une simulation.
 
-### 7. **`src/routes/config.js`**
+### 6. **`src/app.js`**
+
+Ce fichier sert de point d'entrée pour la configuration des routes dans Express. Il importe toutes les routes nécessaires et configure l'application Express pour les utiliser.
+
+### 7. **`src/config.js`**
 
 Ce fichier contient les configurations de l'API, comme la configuration du port et d'autres paramètres nécessaires à l'exécution de l'application.
 
@@ -71,7 +71,7 @@ Ce fichier contient les variables d'environnement nécessaires pour la connexion
 
 ### 9. **`bdd.sql`**
 
-Contient le script SQL pour créer les tables dans la base de données MySQL, ainsi que pour insérer des données de test dans les tables `orders` et `order_items`.
+Contient le script SQL pour créer les tables dans la base de données MySQL, ainsi que pour insérer des données de test dans la table `orders` et `simulations`.
 
 ### 10. **`package.json`**
 
@@ -83,7 +83,7 @@ Ce fichier est le point d'entrée de l'application. Il configure Express et dém
 
 ### 12. **`tests_postman.json`**
 
-Ce fichier contient toutes les requêtes à exécuter sur Postman afin de tester le bon fonctionnement des routes.
+Ce fichier contient toutes les requêtes à exécuter sur Postman afin de tester le bon fonctionnement des routes, notamment la gestion des commandes, des articles dans les commandes et des simulations.
 
 ---
 
@@ -96,208 +96,103 @@ Lors de la création d'une commande, le corps de la requête (`body`) doit inclu
 ```json
 {
   "customerName": "John Doe",
-  "items": [
-    { "name": "Pizza", "quantity": 2 },
-    { "name": "Pasta", "quantity": 1 }
-  ],
+  "simulationId": "sim123",
+  "arrivalDateTime": "2025-01-15 08:00:00",
+  "cookStartDateTime": "2025-01-15 08:30:00",
+  "cookEndDateTime": "2025-01-15 09:00:00",
+  "cookBy": "Chef 1",
+  "deliverStartDateTime": "2025-01-15 09:10:00",
+  "deliverEndDateTime": "2025-01-15 09:30:00",
+  "deliverBy": "Driver 1",
   "status": "pending"
 }
 ```
 
-- `customerName` (obligatoire) : Nom du client pour la commande.
-- `items` (obligatoire) : Liste des articles de la commande, chaque article contenant :
-  - `name` (obligatoire) : Nom de l'article.
-  - `quantity` (obligatoire) : Quantité de cet article.
-- `status` (obligatoire) : Statut de la commande (ex : `pending`, `completed`).
+### 2. **POST `/api/simulations`**
 
-### 2. **PUT `/api/orders/:id`**
-
-Lors de la mise à jour d'une commande, le corps de la requête doit être similaire à celui de la création d'une commande, mais avec un identifiant `id` dans l'URL pour cibler la commande à mettre à jour.
+Lors de la création d'une simulation, le corps de la requête doit inclure les informations suivantes :
 
 ```json
 {
-  "customerName": "Jane Doe",
-  "items": [
-    { "name": "Pizza", "quantity": 3 },
-    { "name": "Salad", "quantity": 1 }
-  ],
-  "status": "completed"
+  "simulationName": "Sim1",
+  "description": "Simulation de test pour une commande"
 }
 ```
-
-- `id` dans l'URL : ID de la commande à mettre à jour.
-- Les mêmes champs que pour le POST (`customerName`, `items`, `status`).
-
-### 3. **DELETE `/api/orders/:id`**
-
-Pour supprimer une commande, il suffit de spécifier l'ID de la commande dans l'URL. Aucune donnée dans le corps de la requête n'est nécessaire.
-
----
-
-## Explication des Endpoints
-
-### 1. **POST `/api/orders`**
-
-**Description** : Crée une nouvelle commande. Cette commande va ajouter à la fois l'entrée dans la table `orders` (pour la commande elle-même) et dans la table `order_items` (pour les articles de la commande).
-
-**Exemple** : 
-```bash
-POST http://localhost:3000/api/orders
-```
-
-**Réponse** (si réussi) :
-```json
-{
-  "id": 4,
-  "customerName": "John Doe",
-  "items": [
-    { "name": "Pizza", "quantity": 2 },
-    { "name": "Pasta", "quantity": 1 }
-  ],
-  "status": "pending"
-}
-```
-
-**Erreur possible** : Si les champs `customerName`, `items` ou `status` sont manquants dans le corps de la requête, une erreur 400 sera renvoyée avec un message d'erreur approprié.
-
----
-
-### 2. **GET `/api/orders`**
-
-**Description** : Récupère toutes les commandes existantes. Chaque commande inclura son `id`, `customerName`, `status`, et ses items associés.
-
-**Exemple** : 
-```bash
-GET http://localhost:3000/api/orders
-```
-
-**Réponse** :
-```json
-[
-  {
-    "id": 1,
-    "customerName": "Testeur",
-    "status": "pending",
-    "createdAt": "2025-01-15T08:25:26Z",
-    "items": [
-      { "name": "Pizza", "quantity": 3 },
-      { "name": "Salad", "quantity": 1 }
-    ]
-  }
-]
-```
-
----
 
 ### 3. **PUT `/api/orders/:id`**
 
-**Description** : Met à jour une commande existante, spécifiée par son `id` dans l'URL.
+Lors de la mise à jour d'une commande, le corps de la requête doit être similaire à celui de la création d'une commande, mais avec un identifiant `id` dans l'URL pour cibler la commande à mettre à jour.
 
-**Exemple** : 
-```bash
-PUT http://localhost:3000/api/orders/1
-```
+### 4. **PUT `/api/simulations/:id`**
 
-**Corps de la requête** :
-```json
-{
-  "customerName": "Jane Doe",
-  "items": [
-    { "name": "Pizza", "quantity": 3 },
-    { "name": "Salad", "quantity": 1 }
-  ],
-  "status": "completed"
-}
-```
+Lors de la mise à jour d'une simulation, le corps de la requête doit être similaire à celui de la création d'une simulation, mais avec un identifiant `id` dans l'URL pour cibler la simulation à mettre à jour.
 
-**Réponse** :
-```json
-{
-  "id": 1,
-  "customerName": "Jane Doe",
-  "items": [
-    { "name": "Pizza", "quantity": 3 },
-    { "name": "Salad", "quantity": 1 }
-  ],
-  "status": "completed"
-}
-```
+### 5. **DELETE `/api/orders/:id`**
 
----
+Pour supprimer une commande, il suffit de spécifier l'ID de la commande dans l'URL. Aucune donnée dans le corps de la requête n'est nécessaire.
 
-### 4. **DELETE `/api/orders/:id`**
+### 6. **DELETE `/api/simulations/:id`**
 
-**Description** : Supprime une commande spécifiée par son `id` dans l'URL.
+Pour supprimer une simulation, il suffit de spécifier l'ID de la simulation dans l'URL. Aucune donnée dans le corps de la requête n'est nécessaire.
 
-**Exemple** :
-```bash
-DELETE http://localhost:3000/api/orders/1
-```
-
-**Réponse** :
-```json
-{
-  "message": "Commande supprimée avec succès."
-}
-```
 ---
 
 ## Schéma de la Base de Données
 
-La base de données est composée de deux tables principales : `orders` et `order_items`.
+La base de données contient deux tables principales : `orders` et `simulations`.
 
 ### Table `orders`
 
-| Colonne       | Type             | Description                               |
-|---------------|------------------|-------------------------------------------|
-| `id`          | `int`            | Identifiant unique de la commande (clé primaire). |
-| `customerName`| `varchar(255)`    | Nom du client qui a passé la commande.     |
-| `status`      | `varchar(50)`     | Statut de la commande (ex : `pending`, `completed`). |
-| `createdAt`   | `timestamp`       | Date et heure de création de la commande. |
+| Colonne              | Type             | Description                               |
+|----------------------|------------------|-------------------------------------------|
+| `id`                 | `int`            | Identifiant unique de la commande (clé primaire). |
+| `customerName`       | `varchar(255)`    | Nom du client ayant passé la commande.    |
+| `simulationId`       | `varchar(255)`    | Identifiant de la simulation associée.    |
+| `arrivalDateTime`    | `datetime`       | Heure d'arrivée de la commande.           |
+| `cookStartDateTime`  | `datetime`       | Heure de début de la préparation.         |
+| `cookEndDateTime`    | `datetime`       | Heure de fin de la préparation.           |
+| `cookBy`             | `varchar(255)`    | Chef responsable de la préparation.       |
+| `deliverStartDateTime`| `datetime`      | Heure de début de la livraison.           |
+| `deliverEndDateTime` | `datetime`       | Heure de fin de la livraison.             |
+| `deliverBy`          | `varchar(255)`    | Livreur responsable de la livraison.      |
+| `status`             | `varchar(255)`    | Statut actuel de la commande (`pending`, `completed`, etc.). |
 
-### Table `order_items`
+### Table `simulations`
 
-| Colonne       | Type             | Description                               |
-|---------------|------------------|-------------------------------------------|
-| `id`          | `int`            | Identifiant unique de l'article de commande (clé primaire). |
-| `order_id`    | `int`            | Référence à l'`id` de la commande dans la table `orders`. |
-| `name`        | `varchar(255)`    | Nom de l'article de la commande.          |
-| `quantity`    | `int`            | Quantité de l'article dans la commande.   |
+| Colonne              | Type             | Description                               |
+|----------------------|------------------|-------------------------------------------|
+| `id`                 | `int`            | Identifiant unique de la simulation (clé primaire). |
+| `simulationName`     | `varchar(255)`    | Nom de la simulation.                    |
+| `description`        | `text`           | Description de la simulation.            |
 
 ---
 
-## Exécuter le projet
+## Installation
 
-### Pré-requis
+1. **Cloner le projet** :
+   ```bash
+   git clone <url_du_projet>
+   ```
 
-Avant d'exécuter le projet, assurez-vous d'avoir installé les dépendances nécessaires en exécutant la commande suivante dans le répertoire du projet :
+2. **Installer les dépendances** :
+   ```bash
+   cd <dossier_du_projet>
+   npm install
+   ```
 
-```bash
-npm install
-```
+3. **Configurer la base de données** :
+  - Ouvrez `bdd.sql` et exécutez le script dans votre base de données MySQL.
+  - Configurez les variables dans le fichier `.env`.
 
-### Démarrer le serveur
+4. **Démarrer l'application** :
+   ```bash
+   npm start
+   ```
 
-Pour démarrer l'application, utilisez la commande suivante :
+---
 
-```bash
-npm start
-```
+## Tests avec Postman
 
-Cela lancera le serveur Express sur le port par défaut `3000`. Vous pourrez alors tester les API en utilisant un outil comme Postman ou cURL.
-
-### Configuration de la base de données
-
-1. Importez le fichier `bdd.sql` dans votre base de données MySQL.
-2. Modifiez le fichier `.env` pour vous assurer que les variables de connexion à la base de données sont correctement définies, par exemple :
-
-```bash
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=restaurant
-```
-
-3. Une fois la base de données configurée, vous pouvez commencer à utiliser l'API.
+Importez le fichier `tests_postman.json` dans Postman pour tester toutes les routes définies. Assurez-vous que l'API est en cours d'exécution avant de procéder.
 
 ---
