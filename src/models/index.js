@@ -15,6 +15,5 @@ sequelize.authenticate()
 // Export sequelize and models
 const db = {};
 db.sequelize = sequelize;
-db.Order = require('./order')(sequelize);
 
 module.exports = db;
