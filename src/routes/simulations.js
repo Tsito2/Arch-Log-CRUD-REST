@@ -1,5 +1,5 @@
 const express = require('express');
-const { createSimulation, getSimulations, updateSimulation, deleteSimulation } = require('../models/simulation');
+const { createSimulation, getSimulationsWithPagination, updateSimulation, deleteSimulation } = require('../models/simulation');
 const router = express.Router();
 
 // Route POST : Créer une simulation
@@ -21,9 +21,12 @@ router.post('/', (req, res) => {
     });
 });
 
-// Route GET : Obtenir toutes les simulations
+// Route GET : Obtenir des simulations avec pagination
 router.get('/', (req, res) => {
-    getSimulations((err, simulations) => {
+    const { page = 1, limit = 10 } = req.query; // Par défaut, page 1 et 10 éléments par page
+    const offset = (page - 1) * limit;
+
+    getSimulationsWithPagination(offset, parseInt(limit), (err, simulations) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json(simulations);
     });

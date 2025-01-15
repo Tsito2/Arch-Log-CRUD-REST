@@ -1,5 +1,5 @@
 const express = require('express');
-const { createOrder, getOrders, updateOrder, deleteOrder } = require('../models/order');
+const { createOrder, getOrders, getOrdersBySimulationId, updateOrder, deleteOrder } = require('../models/order');
 const router = express.Router();
 
 // Route POST : Créer une commande
@@ -14,6 +14,16 @@ router.post('/', (req, res) => {
 // Route GET : Obtenir toutes les commandes
 router.get('/', (req, res) => {
     getOrders((err, orders) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(orders);
+    });
+});
+
+// Route GET : Obtenir les commandes par ID de simulation
+router.get('/simulation/:simulationId', (req, res) => {
+    const { simulationId } = req.params;
+
+    getOrdersBySimulationId(simulationId, (err, orders) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json(orders);
     });
