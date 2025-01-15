@@ -81,6 +81,10 @@ Ce fichier gère les dépendances et les scripts du projet. Il est utilisé pour
 
 Ce fichier est le point d'entrée de l'application. Il configure Express et démarre le serveur, en chargeant les routes et en écoutant sur le port défini.
 
+### 12. **`tests_postman.json`**
+
+Ce fichier contient toutes les requêtes à exécuter sur Postman afin de tester le bon fonctionnement des routes.
+
 ---
 
 ## Explication des entrées attendues
@@ -236,5 +240,64 @@ DELETE http://localhost:3000/api/orders/1
   "message": "Commande supprimée avec succès."
 }
 ```
+---
+
+## Schéma de la Base de Données
+
+La base de données est composée de deux tables principales : `orders` et `order_items`.
+
+### Table `orders`
+
+| Colonne       | Type             | Description                               |
+|---------------|------------------|-------------------------------------------|
+| `id`          | `int`            | Identifiant unique de la commande (clé primaire). |
+| `customerName`| `varchar(255)`    | Nom du client qui a passé la commande.     |
+| `status`      | `varchar(50)`     | Statut de la commande (ex : `pending`, `completed`). |
+| `createdAt`   | `timestamp`       | Date et heure de création de la commande. |
+
+### Table `order_items`
+
+| Colonne       | Type             | Description                               |
+|---------------|------------------|-------------------------------------------|
+| `id`          | `int`            | Identifiant unique de l'article de commande (clé primaire). |
+| `order_id`    | `int`            | Référence à l'`id` de la commande dans la table `orders`. |
+| `name`        | `varchar(255)`    | Nom de l'article de la commande.          |
+| `quantity`    | `int`            | Quantité de l'article dans la commande.   |
+
+---
+
+## Exécuter le projet
+
+### Pré-requis
+
+Avant d'exécuter le projet, assurez-vous d'avoir installé les dépendances nécessaires en exécutant la commande suivante dans le répertoire du projet :
+
+```bash
+npm install
+```
+
+### Démarrer le serveur
+
+Pour démarrer l'application, utilisez la commande suivante :
+
+```bash
+npm start
+```
+
+Cela lancera le serveur Express sur le port par défaut `3000`. Vous pourrez alors tester les API en utilisant un outil comme Postman ou cURL.
+
+### Configuration de la base de données
+
+1. Importez le fichier `bdd.sql` dans votre base de données MySQL.
+2. Modifiez le fichier `.env` pour vous assurer que les variables de connexion à la base de données sont correctement définies, par exemple :
+
+```bash
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=restaurant
+```
+
+3. Une fois la base de données configurée, vous pouvez commencer à utiliser l'API.
 
 ---
