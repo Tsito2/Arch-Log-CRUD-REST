@@ -5,7 +5,6 @@
 ```
 Proj/
 │
-├── .idea/                      # Configuration de l'IDE (non nécessaire pour le projet)
 ├── node_modules/               # Modules npm installés
 ├── src/                        # Code source de l'application
 │   ├── models/                 # Logique des modèles et des requêtes SQL
