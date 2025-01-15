@@ -1,19 +1,17 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const orderRoutes = require('./src/routes/orders');
-
 const app = express();
-const PORT = 3000;
+const bodyParser = require('body-parser');
+const ordersRoutes = require('./src/routes/orders');
+const simulationsRoutes = require('./src/routes/simulations');
 
-// Middlewares
-app.use(cors());
-app.use(bodyParser.json()); // Cette ligne permet de parser les données JSON dans les requêtes
+// Middleware
+app.use(bodyParser.json());
 
 // Routes
-app.use('/api/orders', orderRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/simulations', simulationsRoutes);
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-    console.log(`Serveur démarré sur http://localhost:${PORT}`);
+// Démarrer le serveur
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
 });
