@@ -1,24 +1,22 @@
 const mysql = require('mysql2');
-require('dotenv').config();
+require('dotenv').config(); // Charge les variables d'environnement depuis le fichier .env
 
-const connectDB = () => {
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root', // Utilisateur MySQL (par défaut 'root' avec WAMP)
-        password: '', // Mot de passe MySQL (par défaut vide avec WAMP)
-        database: 'restaurant', // Nom de ta base de données
-    });
+// Connexion MySQL
+const db = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+});
 
-    connection.connect((err) => {
-        if (err) {
-            console.error("MySQL connection failed:", err);
-            process.exit(1);
-        } else {
-            console.log("MySQL connected");
-        }
-    });
+// Connecte à la base de données
+db.connect((err) => {
+    if (err) {
+        console.error("Erreur de connexion à MySQL:", err.message);
+        process.exit(1); // Arrête l'application si la connexion échoue
+    } else {
+        console.log("Connexion à MySQL réussie !");
+    }
+});
 
-    return connection;
-};
-
-module.exports = { connectDB };
+module.exports = db; // Exporte la connexion
