@@ -188,7 +188,7 @@ La base de données contient deux tables principales : `orders` et `simulations`
 
 4. **Démarrer l'application** :
    ```bash
-   npm start
+   node server.js
    ```
 
 ---
