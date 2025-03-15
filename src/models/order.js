@@ -4,9 +4,13 @@ const db = require('../config'); // Assure-toi que le chemin est correct ici
 const createOrder = ({ simulationId, name, arrivalDateTime, cookStartDateTime, cookEndDateTime, cookBy, deliverStartDateTime, deliverEndDateTime, deliverBy }, callback) => {
     console.log("Données reçues:", { simulationId, name, arrivalDateTime, cookStartDateTime, cookEndDateTime, cookBy, deliverStartDateTime, deliverEndDateTime, deliverBy });
 
-    if (!simulationId || !name || !arrivalDateTime || !cookStartDateTime || !cookEndDateTime || !cookBy || !deliverStartDateTime || !deliverEndDateTime || !deliverBy) {
-        return callback(new Error("Tous les champs sont requis."));
+    if (!simulationId || !name || !arrivalDateTime || !cookStartDateTime || !cookEndDateTime || !cookBy) {
+        return callback(new Error("Tous les champs sont requis. exceptés deliverStartDateTime, deliverEndDateTime, deliverBy"));
     }
+
+    deliverStartDateTime = deliverStartDateTime || null;
+    deliverEndDateTime = deliverEndDateTime || null;
+    deliverBy = deliverBy || null;
 
     const query = "INSERT INTO orders (simulationId, name, arrivalDateTime, cookStartDateTime, cookEndDateTime, cookBy, deliverStartDateTime, deliverEndDateTime, deliverBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     db.query(query, [simulationId, name, arrivalDateTime, cookStartDateTime, cookEndDateTime, cookBy, deliverStartDateTime, deliverEndDateTime, deliverBy], (err, result) => {
