@@ -6,6 +6,11 @@
 Proj/
 │
 ├── node_modules/               # Modules npm installés
+├── documentation/              # Images PlantUML de la Documentation C4 du projet
+│   ├── Diagram_Code.png
+│   ├── Diagram_Components.png
+│   ├── Diagram_Components.png
+│   ├── Diagram_Context.png
 ├── src/                        # Code source de l'application
 │   ├── models/                 # Logique des modèles et des requêtes SQL
 │   │   ├── index.js            # Connexion à la base de données MySQL
@@ -97,16 +102,17 @@ Lors de la création d'une commande, le corps de la requête (`body`) doit inclu
 
 ```json
 {
-  "customerName": "John Doe",
-  "simulationId": "sim123",
-  "arrivalDateTime": "2025-01-15 08:00:00",
-  "cookStartDateTime": "2025-01-15 08:30:00",
-  "cookEndDateTime": "2025-01-15 09:00:00",
-  "cookBy": "Chef 1",
-  "deliverStartDateTime": "2025-01-15 09:10:00",
-  "deliverEndDateTime": "2025-01-15 09:30:00",
-  "deliverBy": "Driver 1",
-  "status": "pending"
+   "id": 1,
+   "simulationId": "sim123",
+   "name": "Order 1",
+   "arrivalDateTime": "2025-01-15T07:00:00.000Z",
+   "cookStartDateTime": "2025-01-15T07:30:00.000Z",
+   "cookEndDateTime": "2025-01-15T08:00:00.000Z",
+   "cookBy": "Chef 1",
+   "deliverStartDateTime": "2025-01-15T08:10:00.000Z",
+   "deliverEndDateTime": "2025-01-15T08:30:00.000Z",
+   "deliverBy": "Driver 1",
+   "createdDateTime": "2025-01-15T12:36:32.000Z"
 }
 ```
 
@@ -116,8 +122,13 @@ Lors de la création d'une simulation, le corps de la requête doit inclure les 
 
 ```json
 {
-  "simulationName": "Sim1",
-  "description": "Simulation de test pour une commande"
+   "id": "sim1",
+   "ordersCountMin": 5,
+   "ordersCountMax": 15,
+   "startDateTime": "2025-01-01T07:00:00.000Z",
+   "endDateTime": "2025-01-01T11:00:00.000Z",
+   "duration": 240,
+   "createdDateTime": "2025-01-15T14:52:17.000Z"
 }
 ```
 
@@ -166,6 +177,11 @@ La base de données contient deux tables principales : `orders` et `simulations`
 | `id`                 | `int`            | Identifiant unique de la simulation (clé primaire). |
 | `simulationName`     | `varchar(255)`    | Nom de la simulation.                    |
 | `description`        | `text`           | Description de la simulation.            |
+
+---
+## Documentation C4
+Les images de la Documentation C4 réalisées sur PlantUML se retrouvent dans
+--> documentation/
 
 ---
 
