@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
     `cookBy` VARCHAR(255) NOT NULL,
     `deliverStartDateTime` TIMESTAMP NULL DEFAULT NULL,
     `deliverEndDateTime` TIMESTAMP NULL DEFAULT NULL,
-    `deliverBy` VARCHAR(255) NOT NULL,
+    `deliverBy` VARCHAR(255) NULL DEFAULT NULL,
     `createdDateTime` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `idx_simulationId` (`simulationId`),
